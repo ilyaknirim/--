@@ -8,9 +8,11 @@ let game = {
     speed: 2,
     jumpHeight: 100,
     jumpDuration: 500,
-    gravity: 0.5,
+    gravity: 0.6,
     jumpVelocity: 0,
-    isJumping: false
+    isJumping: false,
+    dinoY: 10, // начальная позиция динозавра
+    groundY: 10
 };
 
 // DOM элементы
@@ -142,39 +144,73 @@ function jump() {
 function checkCollision() {
     const dinoRect = dino.getBoundingClientRect();
     const cactusRect = cactus.getBoundingClientRect();
-    
-    // Упрощенная проверка коллизии
+
+    // Более точные хитбоксы
+    // Динозавр: уменьшаем хитбокс (убираем пустое пространство сверху и снизу)
+    const dinoHitbox = {
+        left: dinoRect.left + 10,
+        right: dinoRect.right - 10,
+        top: dinoRect.top + 10,
+        bottom: dinoRect.bottom - 5
+    };
+
+    // Кактус: уменьшаем хитбокс (emoji может иметь неравномерные границы)
+    const cactusHitbox = {
+        left: cactusRect.left + 5,
+        right: cactusRect.right - 5,
+        top: cactusRect.top + 10,
+        bottom: cactusRect.bottom - 5
+    };
+
+    // Проверка коллизии с улучшенными хитбоксами
     const collision = !(
-        dinoRect.right < cactusRect.left ||
-        dinoRect.left > cactusRect.right ||
-        dinoRect.bottom < cactusRect.top ||
-        dinoRect.top > cactusRect.bottom
+        dinoHitbox.right < cactusHitbox.left ||
+        dinoHitbox.left > cactusHitbox.right ||
+        dinoHitbox.bottom < cactusHitbox.top ||
+        dinoHitbox.top > cactusHitbox.bottom
     );
-    
+
     return collision;
 }
 
 // Игровой цикл
 function gameLoop() {
     if (!game.isPlaying || game.isGameOver || game.isPaused) return;
-    
+
+    // Физика прыжка
+    if (game.isJumping) {
+        game.jumpVelocity += game.gravity;
+        game.dinoY += game.jumpVelocity;
+
+        // Проверка приземления
+        if (game.dinoY >= game.groundY) {
+            game.dinoY = game.groundY;
+            game.isJumping = false;
+            game.jumpVelocity = 0;
+            dino.classList.remove('jumping');
+        }
+
+        // Обновление позиции динозавра
+        dino.style.bottom = game.dinoY + 'px';
+    }
+
     // Проверка столкновения
     if (checkCollision()) {
         endGame();
         return;
     }
-    
+
     // Увеличение счета
     game.score++;
     updateScore();
-    
+
     // Увеличение скорости каждые 100 очков
     if (game.score % 100 === 0) {
         game.speed = Math.max(0.5, game.speed - 0.1);
         cactus.style.animationDuration = `${game.speed}s`;
         updateStatus(`Скорость увеличена! ${game.speed.toFixed(1)}x`);
     }
-    
+
     // Следующий кадр
     requestAnimationFrame(gameLoop);
 }
@@ -205,19 +241,26 @@ function endGame() {
 
 // Рестарт игры
 function restartGame() {
+    // Сброс состояния динозавра
+    game.isJumping = false;
+    game.jumpVelocity = 0;
+    game.dinoY = game.groundY;
+    dino.style.bottom = game.dinoY + 'px';
+    dino.classList.remove('jumping');
+
     // Сброс положения кактуса
     cactus.style.right = '-40px';
     cactus.style.animation = 'none';
-    
+
     // Сброс положения облака
     cloud.style.right = '-60px';
     cloud.style.animation = 'none';
-    
+
     // Скрытие экранов
     startScreen.style.display = 'none';
     gameOverScreen.style.display = 'none';
     pauseScreen.style.display = 'none';
-    
+
     // Запуск новой игры
     setTimeout(() => {
         startGame();
