@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Слоник в пустыне</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div id="game-over" class="hidden">
+            <div class="game-over-text">GAME OVER</div>
+            <button id="restart-btn">Перезапустить</button>
+        </div>
+        <div id="start-screen">
+            <div class="start-text">Нажмите на экран, чтобы начать</div>
+        </div>
+        <canvas id="game-canvas"></canvas>
+        <div class="score-container">
+            <div class="score">СЧЕТ: <span id="score-value">0</span></div>
+            <div class="high-score">РЕКОРД: <span id="high-score-value">0</span></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
