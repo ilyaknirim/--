@@ -50,30 +50,41 @@ body {
 
 .dino-body {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 16px;
     background-color: #535353;
     bottom: 5px;
-    left: 5px;
+    left: 7px;
+    border-radius: 4px;
 }
 
 .dino-head {
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 14px;
     background-color: #535353;
     top: 0;
-    right: 0;
-    border-radius: 50% 50% 0 0;
+    right: 3px;
+    border-radius: 40% 40% 0 0;
+}
+
+.dino-neck {
+    position: absolute;
+    width: 6px;
+    height: 8px;
+    background-color: #535353;
+    top: 4px;
+    right: 10px;
+    transform: rotate(-10deg);
 }
 
 .dino-eye {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 3px;
+    height: 3px;
     background-color: white;
     border-radius: 50%;
-    top: 4px;
+    top: 3px;
     right: 4px;
 }
 
@@ -83,8 +94,27 @@ body {
     height: 2px;
     background-color: black;
     border-radius: 50%;
-    top: 1px;
+    top: 0.5px;
+    right: 0.5px;
+}
+
+.dino-nostril {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 6px;
     right: 1px;
+}
+
+.dino-mouth {
+    position: absolute;
+    width: 6px;
+    height: 1px;
+    background-color: #333;
+    top: 8px;
+    right: 2px;
 }
 
 .dino-leg {
@@ -93,6 +123,7 @@ body {
     height: 8px;
     background-color: #535353;
     bottom: 0;
+    border-radius: 0 0 2px 2px;
 }
 
 .dino-leg.front {
@@ -111,16 +142,30 @@ body {
     top: 15px;
     right: 5px;
     transform: rotate(20deg);
+    border-radius: 0 0 1.5px 1.5px;
 }
 
 .dino-tail {
     position: absolute;
-    width: 8px;
-    height: 4px;
+    width: 10px;
+    height: 3px;
     background-color: #535353;
     bottom: 12px;
     left: 0;
     transform: rotate(20deg);
+    border-radius: 3px 0 0 3px;
+}
+
+.dino-tail::before {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 2px;
+    background-color: #535353;
+    bottom: 0;
+    left: -2px;
+    transform: rotate(-20deg);
+    border-radius: 2px 0 0 2px;
 }
 
 /* Анимация бега */
@@ -289,7 +334,7 @@ body {
 }
 
 @keyframes blink {
-    0%, 90%, 100% { height: 4px; }
+    0%, 90%, 100% { height: 3px; }
     95% { height: 1px; }
 }
 
