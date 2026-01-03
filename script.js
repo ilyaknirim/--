@@ -267,7 +267,7 @@ function gameLoop() {
     if (gameOver || isPaused) return;
 
     // Рисуем фон
-    drawDesertBackground();
+    drawBackground();
 
     // Обновляем и рисуем частицы
     if (particlesEnabled) {
@@ -311,26 +311,7 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-function drawDesertBackground() {
-    // Градиент неба от голубого к золотому
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#87CEEB');
-    gradient.addColorStop(1, '#FFD700');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Песчаная земля
-    ctx.fillStyle = '#F4A460';
-    ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
-
-    // Солнце
-    ctx.fillStyle = '#FFFF00';
-    ctx.beginPath();
-    ctx.arc(canvas.width - 100, 80, 40, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Облака удалены для ледникового периода
-}
+// Функция drawDesertBackground() удалена, используется drawBackground() для ледникового периода
 
 function endGame() {
     gameOver = true;
