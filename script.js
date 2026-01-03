@@ -192,7 +192,7 @@ class Bone {
     }
 
     draw() {
-        ctx.fillStyle = '#FFF';
+        ctx.fillStyle = '#FFFFFF';
         // Верхняя кость
         ctx.fillRect(this.x, 0, this.width, this.height);
         // Нижняя кость
