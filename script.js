@@ -133,9 +133,243 @@ if (!this.passed && this.x + this.totalWidth < elephant.x) {
     }
 }
 
-// Добавим в функцию drawBackground(), перед рисованием солнца:
-// Облака
-for (let i = 0; i < 3; i++) {
+// Конец игры
+function endGame() {
+    gameOver = true;
+    gameOverElement.classList.remove('hidden');
+}
+
+// Конец игры с возвращением мамонтов
+function endGameWithNuclearExplosion() {
+    gameOver = true;
+    
+    // Показываем экран конца игры
+    gameOverElement.classList.remove('hidden');
+    const gameOverText = document.querySelector('.game-over-text');
+    
+    // Случайный финальный текст о мамонтах
+    const endings = [
+        'КОНЕЦ ИГРЫ: МАМОНТЫ ВЕРНУЛИСЬ ДОМОЙ!',
+        'КОНЕЦ ИГРЫ: ЭПОХА МАМОНТОВ НАЧАЛАСЬ!',
+        'КОНЕЦ ИГРЫ: ЛЕДНИКОВЫЙ ПЕРИОД ВОЗВРАЩАЕТСЯ!',
+        'КОНЕЦ ИГРЫ: МАМОНТЫ СПАСЕНЫ ОТ ВЫМИРАНИЯ!'
+    ];
+    
+    gameOverText.textContent = endings[Math.floor(Math.random() * endings.length)];
+    
+    // Запускаем кат-сцену с возвращением мамонтов
+    playMammothReturnCutscene();
+}
+
+// Кат-сцена с возвращением мамонтов
+function playMammothReturnCutscene() {
+    let animationFrame = 0;
+    const totalFrames = 300;
+    
+    function animateMammothReturn() {
+        // Рисуем фон ледникового периода
+        drawBackground();
+        
+        // Рисуем мамонтёнка
+        elephant.draw();
+        
+        // Рисуем кости
+        for (const bone of bones) {
+            bone.draw();
+        }
+        
+        // Анимация появления других мамонтов
+        if (animationFrame > 50) {
+            // Первый мамонт
+            ctx.fillStyle = '#8B7355';
+            ctx.beginPath();
+            ctx.arc(100 + animationFrame * 2, canvas.height - 150, 30, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Второй мамонт
+            ctx.beginPath();
+            ctx.arc(canvas.width - 100 - animationFrame * 2, canvas.height - 150, 30, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Анимация снега
+        if (animationFrame > 100) {
+            for (let i = 0; i < 50; i++) {
+                const snowX = Math.random() * canvas.width;
+                const snowY = Math.random() * canvas.height;
+                const snowSize = Math.random() * 3 + 1;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(snowX, snowY, snowSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Анимация северного сияния
+        if (animationFrame > 150) {
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
+            gradient.addColorStop(0, `rgba(0, 255, 0, ${0.5 + Math.sin(animationFrame * 0.05) * 0.2})`);
+            gradient.addColorStop(0.5, `rgba(0, 200, 100, ${0.3 + Math.sin(animationFrame * 0.05) * 0.1})`);
+            gradient.addColorStop(1, `rgba(0, 150, 200, ${0.1 + Math.sin(animationFrame * 0.05) * 0.05})`);
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            
+            for (let x = 0; x <= canvas.width; x += 10) {
+                const y = Math.sin(x * 0.01 + animationFrame * 0.02) * 50 + Math.sin(x * 0.02 + animationFrame * 0.03) * 30 + 100;
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineTo(canvas.width, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // Увеличиваем счетчик кадров
+        animationFrame++;
+        
+        // Продолжаем анимацию, если не достигли конца
+        if (animationFrame < totalFrames) {
+            requestAnimationFrame(animateMammothReturn);
+        }
+    }
+    
+    // Запускаем анимацию
+    animateMammothReturn();
+}
+
+// Рисуем фон ледникового периода
+function drawBackground() {
+    // Небо ледникового периода
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Градиент для неба ледникового периода
+    const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    skyGradient.addColorStop(0, '#B0E0E6'); // Светло-голубой
+    skyGradient.addColorStop(0.5, '#87CEEB'); // Небесно-голубой
+    skyGradient.addColorStop(1, '#E0F6FF'); // Бледно-голубой
+    ctx.fillStyle = skyGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Снежные горы на заднем плане
+    drawSnowyMountains();
+
+    // Снег
+    ctx.fillStyle = '#FFFFFF'; // Белый снег
+    ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
+
+    // Добавляем текстуру снега
+    ctx.fillStyle = '#F0F8FF';
+    for (let i = 0; i < canvas.width; i += 15) {
+        for (let j = canvas.height - 100; j < canvas.height; j += 15) {
+            if (Math.random() > 0.6) {
+                ctx.beginPath();
+                ctx.arc(i, j, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    // Солнце ледникового периода
+    ctx.fillStyle = '#FFFACD'; // Лимонно-кремовый
+    ctx.beginPath();
+    ctx.arc(canvas.width - 100, 50, 30, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Добавляем северное сияние
+    drawAurora();
+}
+
+// Рисуем северное сияние
+function drawAurora() {
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
+    gradient.addColorStop(0, 'rgba(0, 255, 0, 0.5)');
+    gradient.addColorStop(0.5, 'rgba(0, 200, 100, 0.3)');
+    gradient.addColorStop(1, 'rgba(0, 150, 200, 0.1)');
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    
+    for (let x = 0; x <= canvas.width; x += 10) {
+        const y = Math.sin(x * 0.01) * 50 + Math.sin(x * 0.02) * 30 + 100;
+        ctx.lineTo(x, y);
+    }
+    
+    ctx.lineTo(canvas.width, 0);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.restore();
+}
+
+// Рисуем снежные горы
+function drawSnowyMountains() {
+    ctx.fillStyle = '#F0F8FF';
+    
+    // Первая гора
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height - 100);
+    ctx.lineTo(150, canvas.height - 250);
+    ctx.lineTo(300, canvas.height - 100);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Вторая гора
+    ctx.beginPath();
+    ctx.moveTo(200, canvas.height - 100);
+    ctx.lineTo(400, canvas.height - 300);
+    ctx.lineTo(600, canvas.height - 100);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Третья гора
+    ctx.beginPath();
+    ctx.moveTo(500, canvas.height - 100);
+    ctx.lineTo(700, canvas.height - 280);
+    ctx.lineTo(900, canvas.height - 100);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Добавляем снежные шапки
+    ctx.fillStyle = '#FFFFFF';
+    
+    // Снежная шапка на первой горе
+    ctx.beginPath();
+    ctx.moveTo(100, canvas.height - 200);
+    ctx.lineTo(150, canvas.height - 250);
+    ctx.lineTo(200, canvas.height - 200);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Снежная шапка на второй горе
+    ctx.beginPath();
+    ctx.moveTo(350, canvas.height - 250);
+    ctx.lineTo(400, canvas.height - 300);
+    ctx.lineTo(450, canvas.height - 250);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Снежная шапка на третьей горе
+    ctx.beginPath();
+    ctx.moveTo(650, canvas.height - 230);
+    ctx.lineTo(700, canvas.height - 280);
+    ctx.lineTo(750, canvas.height - 230);
+    ctx.closePath();
+    ctx.fill();
+}
+
+// Фон ледникового периода готов
     const cloudX = (canvas.width * i / 3 + Date.now() * 0.01) % (canvas.width + 200) - 100;
     const cloudY = 30 + Math.sin(Date.now() * 0.001 + i) * 10;
     
