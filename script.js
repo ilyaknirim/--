@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
             score = 0;
             isGameOver = false;
             scoreElement.textContent = score;
+
+            // Убедимся, что все анимации запущены
+            const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
+            allAnimatedElements.forEach(el => {
+                el.style.animationPlayState = 'running';
+            });
+
             cactus.classList.add('move-left');
             cloud.classList.add('cloud-move');
             gameLoop();
@@ -100,8 +107,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function endGame() {
         isGameOver = true;
         gameStarted = false;
+
+        // Заморозка всех анимаций
+        const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
+        allAnimatedElements.forEach(el => {
+            el.style.animationPlayState = 'paused';
+        });
+
+        // Остановка движения кактусов и облаков
         cactus.classList.remove('move-left');
         cloud.classList.remove('cloud-move');
+
         gameOverElement.style.display = 'block';
         continueBtn.style.display = 'block';
 
@@ -117,7 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gameOverElement.style.display = 'none';
         continueBtn.style.display = 'none';
 
-        // Перезапуск анимаций
+        // Возобновление всех анимаций
+        const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
+        allAnimatedElements.forEach(el => {
+            el.style.animationPlayState = 'running';
+        });
+
+        // Перезапуск движения кактусов и облаков
         cactus.classList.add('move-left');
         cloud.classList.add('cloud-move');
 
