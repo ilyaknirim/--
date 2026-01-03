@@ -1,65 +1,44 @@
+/* Добавим после существующих стилей */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(to bottom, #ff7e5f, #feb47b); /* Оранжево-малиновый закат */
-    overflow: hidden;
-}
-
-.game-container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 300px;
-    margin: 0 auto;
-}
-
-#game-canvas {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    display: block;
-}
-
-.score-container {
+.instructions {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    bottom: 20px;
+    left: 20px;
     color: white;
-    font-size: 18px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.score, .high-score {
-    margin-bottom: 10px;
-}
-
-.plus50-button {
-    padding: 5px 10px;
     font-size: 14px;
-    background-color: #ff7e5f;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 250px;
+}
+
+.controls-panel {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.control-button {
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: rgba(255, 126, 95, 0.8);
     border: none;
     color: white;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 5px;
+    backdrop-filter: blur(5px);
 }
 
-.plus50-button:hover {
-    background-color: #feb47b;
+.control-button:hover {
+    background-color: rgba(254, 180, 123, 0.9);
 }
 
-#game-over {
+#pause-screen {
     position: absolute;
     top: 0;
     left: 0;
@@ -71,80 +50,113 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
-    z-index: 10;
+    z-index: 15;
 }
 
-.game-over-text {
-    font-size: 36px;
+.pause-text {
+    font-size: 48px;
     margin-bottom: 20px;
+    color: #ff7e5f;
 }
 
-#restart-btn {
-    padding: 10px 20px;
+.resume-button {
+    padding: 12px 24px;
     font-size: 18px;
-    background-color: #ff7e5f;
+    background-color: #4CAF50;
     border: none;
     color: white;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin: 10px;
 }
 
-#restart-btn:hover {
-    background-color: #feb47b;
+.resume-button:hover {
+    background-color: #45a049;
 }
 
-#start-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.settings-panel {
+    margin-top: 20px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 5;
+    gap: 10px;
 }
 
-.start-text {
-    font-size: 24px;
+/* Анимация для счетчика при получении очков */
+@keyframes scorePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.score-pop {
+    animation: scorePop 0.3s ease;
+}
+
+/* Анимация для нового рекорда */
+@keyframes highScoreGlow {
+    0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
+    50% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+    100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
+}
+
+.high-score-glow {
+    animation: highScoreGlow 1s infinite;
+}
+
+/* Прогресс-бар для скорости */
+.speed-indicator {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.speed-bar {
+    height: 100%;
+    background: linear-gradient(to right, #4CAF50, #FF9800, #f44336);
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.speed-label {
+    position: absolute;
+    top: -20px;
+    left: 0;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    animation: pulse 1.5s infinite;
+    font-size: 12px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-@keyframes pulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* Адаптивность для мобильных устройств */
+/* Улучшения для мобильных устройств */
 @media (max-width: 600px) {
-    .game-container {
-        height: 250px;
+    .instructions {
+        font-size: 12px;
+        bottom: 10px;
+        left: 10px;
+        max-width: 150px;
     }
-
-    .score-container {
-        font-size: 16px;
-        top: 10px;
+    
+    .controls-panel {
+        bottom: 10px;
         right: 10px;
     }
-
-    .game-over-text {
-        font-size: 28px;
+    
+    .control-button {
+        padding: 6px 10px;
+        font-size: 12px;
     }
-
-    #restart-btn {
-        font-size: 16px;
-        padding: 8px 16px;
+    
+    .pause-text {
+        font-size: 32px;
     }
-
-    .start-text {
-        font-size: 20px;
+    
+    .speed-indicator {
+        width: 80px;
+        top: 10px;
+        left: 10px;
     }
 }
