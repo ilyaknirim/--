@@ -67,7 +67,8 @@ body {
     left: 50px;
     width: 60px;
     height: 60px;
-    transition: bottom 0.3s;
+    transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center bottom;
 }
 
 .dino-body {
@@ -80,14 +81,63 @@ body {
     border-radius: 10px 10px 0 0;
 }
 
+.dino-head {
+    position: absolute;
+    width: 24px;
+    height: 22px;
+    background: #535353;
+    top: 0;
+    right: 5px;
+    border-radius: 50% 50% 0 0;
+}
+
+.dino-neck {
+    position: absolute;
+    width: 12px;
+    height: 16px;
+    background: #535353;
+    top: 8px;
+    right: 20px;
+    transform: rotate(-10deg);
+}
+
 .dino-eye {
     position: absolute;
     width: 10px;
     height: 10px;
     background: white;
     border-radius: 50%;
-    top: 10px;
-    right: 10px;
+    top: 6px;
+    right: 8px;
+}
+
+.dino-pupil {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: black;
+    border-radius: 50%;
+    top: 2.5px;
+    right: 2.5px;
+}
+
+.dino-nostril {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #333;
+    border-radius: 50%;
+    top: 12px;
+    right: 2px;
+}
+
+.dino-mouth {
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background: #333;
+    top: 16px;
+    right: 4px;
 }
 
 .dino-leg {
@@ -96,6 +146,7 @@ body {
     height: 20px;
     background: #535353;
     bottom: 0;
+    transform-origin: top center;
 }
 
 .dino-leg.front {
@@ -106,14 +157,135 @@ body {
     right: 5px;
 }
 
+.dino-arm {
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    background: #535353;
+    top: 20px;
+    right: 15px;
+    transform: rotate(20deg);
+    border-radius: 0 0 3px 3px;
+    transform-origin: top center;
+}
+
+.dino-arm.left {
+    right: 25px;
+    transform: rotate(30deg);
+}
+
+.dino-tail {
+    position: absolute;
+    width: 20px;
+    height: 6px;
+    background: #535353;
+    bottom: 15px;
+    left: 0;
+    transform: rotate(20deg);
+    border-radius: 6px 0 0 6px;
+    transform-origin: right center;
+}
+
+.dino-tail::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 4px;
+    background: #535353;
+    bottom: 0;
+    left: -5px;
+    transform: rotate(-30deg);
+    border-radius: 4px 0 0 4px;
+}
+
+.dino-tail::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 3px;
+    background: #535353;
+    bottom: 0;
+    left: -8px;
+    transform: rotate(-50deg);
+    border-radius: 3px 0 0 3px;
+}
+
+/* Анимация бега */
+.dino-leg {
+    animation: walk 0.3s infinite alternate;
+}
+
+.dino-leg.back {
+    animation-delay: 0.15s;
+}
+
+.dino-arm {
+    animation: armSwing 0.3s infinite alternate;
+}
+
+.dino-arm.left {
+    animation-delay: 0.15s;
+}
+
+.dino-tail {
+    animation: tailWag 0.4s infinite alternate ease-in-out;
+}
+
+@keyframes walk {
+    0% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-3px) rotate(0deg); }
+    100% { transform: translateY(0) rotate(5deg); }
+}
+
+@keyframes armSwing {
+    0% { transform: rotate(20deg); }
+    100% { transform: rotate(30deg); }
+}
+
+@keyframes tailWag {
+    0% { transform: rotate(20deg); }
+    100% { transform: rotate(30deg); }
+}
+
 /* Прыжок */
 .dino.jumping {
-    animation: jump 0.5s ease;
+    animation: jump 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.dino.jumping .dino-leg,
+.dino.jumping .dino-arm {
+    animation: none;
+}
+
+.dino.jumping .dino-leg.front {
+    transform: rotate(-20deg);
+}
+
+.dino.jumping .dino-leg.back {
+    transform: rotate(20deg);
+}
+
+.dino.jumping .dino-arm {
+    transform: rotate(-15deg);
+}
+
+.dino.jumping .dino-arm.left {
+    transform: rotate(-5deg);
+}
+
+.dino.jumping .dino-tail {
+    animation: tailJump 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes jump {
     0%, 100% { bottom: 10px; }
     50% { bottom: 100px; }
+}
+
+@keyframes tailJump {
+    0% { transform: rotate(20deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(20deg); }
 }
 
 /* Кактус */
