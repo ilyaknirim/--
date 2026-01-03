@@ -51,16 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Проверка столкновения
+    // Проверка столкновения с учетом уменьшенного размера динозавра
     function checkCollision() {
         const dinoRect = dino.getBoundingClientRect();
         const cactusRect = cactus.getBoundingClientRect();
 
+        // Создаем более точную область столкновения для маленького динозавра
+        const dinoHitbox = {
+            left: dinoRect.left + 5,
+            right: dinoRect.right - 5,
+            top: dinoRect.top + 5,
+            bottom: dinoRect.bottom - 2
+        };
+
         return !(
-            dinoRect.right < cactusRect.left || 
-            dinoRect.left > cactusRect.right || 
-            dinoRect.bottom < cactusRect.top || 
-            dinoRect.top > cactusRect.bottom
+            dinoHitbox.right < cactusRect.left || 
+            dinoHitbox.left > cactusRect.right || 
+            dinoHitbox.bottom < cactusRect.top || 
+            dinoHitbox.top > cactusRect.bottom
         );
     }
 
