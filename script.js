@@ -34,52 +34,85 @@ document.addEventListener('DOMContentLoaded', () => {
         gravity: 0.8,
         jumpPower: -18, // Увеличенная сила прыжка для преодоления 3 косточек
         grounded: true,
-        color: '#8B4513', // Коричневый цвет для слона
+        color: '#6B4423', // Цвет мамонтёнка
         draw() {
-            // Основной цвет слона
+            // Основной цвет мамонтёнка
             ctx.fillStyle = this.color;
             
-            // Тело слона (более детализированное)
+            // Тело мамонтёнка (пушистое и круглое)
             ctx.beginPath();
-            ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2, this.height/2.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(this.x + this.width/2, this.y + this.height/2 + 5, this.width/2 + 5, this.height/2.2, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Голова слона (круглая)
+            // Голова мамонтёнка (круглая)
             ctx.beginPath();
-            ctx.arc(this.x + this.width - 15, this.y - 15, 18, 0, Math.PI * 2);
+            ctx.arc(this.x + this.width - 10, this.y - 5, 20, 0, Math.PI * 2);
             ctx.fill();
             
-            // Хобот (S-образный)
+            // Хобот (изогнутый)
             ctx.strokeStyle = this.color;
-            ctx.lineWidth = 10;
+            ctx.lineWidth = 12;
             ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.moveTo(this.x + this.width - 5, this.y);
-            ctx.quadraticCurveTo(this.x + this.width + 10, this.y + 10, this.x + this.width + 5, this.y + 25);
+            ctx.moveTo(this.x + this.width - 5, this.y + 5);
+            ctx.quadraticCurveTo(this.x + this.width + 15, this.y + 15, this.x + this.width + 10, this.y + 30);
             ctx.stroke();
             
-            // Глаза
+            // Глаза (большие и выразительные)
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(this.x + this.width - 18, this.y - 20, 5, 0, Math.PI * 2);
+            ctx.arc(this.x + this.width - 15, this.y - 8, 7, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = 'black';
             ctx.beginPath();
-            ctx.arc(this.x + this.width - 18, this.y - 20, 2, 0, Math.PI * 2);
+            ctx.arc(this.x + this.width - 15, this.y - 8, 4, 0, Math.PI * 2);
             ctx.fill();
             
-            // Уши (большие и детализированные)
+            // Блик в глазу
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(this.x + this.width - 13, this.y - 10, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Уши мамонтёнка (большие и круглые)
             ctx.fillStyle = this.color;
             ctx.beginPath();
-            ctx.ellipse(this.x + this.width - 25, this.y - 25, 8, 15, Math.PI / 4, 0, Math.PI * 2);
+            ctx.ellipse(this.x + this.width - 30, this.y - 5, 12, 18, Math.PI / 6, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.ellipse(this.x + this.width - 5, this.y - 25, 8, 15, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.ellipse(this.x + this.width + 5, this.y - 5, 12, 18, -Math.PI / 6, 0, Math.PI * 2);
             ctx.fill();
             
-            // Ноги (детализированные)
-            const legWidth = 12;
-            const legHeight = 20;
+            // Внутренняя часть ушей (розовая)
+            ctx.fillStyle = '#FFB6C1';
+            ctx.beginPath();
+            ctx.ellipse(this.x + this.width - 30, this.y - 5, 6, 10, Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(this.x + this.width + 5, this.y - 5, 6, 10, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Бивни мамонтёнка
+            ctx.fillStyle = '#F5F5DC';
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width - 5, this.y + 5);
+            ctx.lineTo(this.x + this.width, this.y + 25);
+            ctx.lineTo(this.x + this.width + 3, this.y + 23);
+            ctx.lineTo(this.x + this.width - 2, this.y + 3);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width - 10, this.y + 5);
+            ctx.lineTo(this.x + this.width - 5, this.y + 25);
+            ctx.lineTo(this.x + this.width - 2, this.y + 23);
+            ctx.lineTo(this.x + this.width - 7, this.y + 3);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Ноги (толстые и короткие)
+            const legWidth = 15;
+            const legHeight = 18;
             
             // Передние ноги
             ctx.fillStyle = this.color;
@@ -87,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.ellipse(this.x + 15, this.y + this.height, legWidth/2, legHeight/2, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.ellipse(this.x + 15, this.y + this.height + 10, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
+            ctx.ellipse(this.x + 15, this.y + this.height + 8, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
             ctx.fill();
             
             // Задние ноги
@@ -95,22 +128,37 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.ellipse(this.x + 45, this.y + this.height, legWidth/2, legHeight/2, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.ellipse(this.x + 45, this.y + this.height + 10, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
+            ctx.ellipse(this.x + 45, this.y + this.height + 8, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Хвост
+            // Хвост (короткий и пушистый)
             ctx.strokeStyle = this.color;
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 8;
             ctx.beginPath();
             ctx.moveTo(this.x, this.y + this.height/2);
-            ctx.quadraticCurveTo(this.x - 15, this.y + this.height/2 - 5, this.x - 10, this.y + this.height/2 - 15);
+            ctx.quadraticCurveTo(this.x - 12, this.y + this.height/2 - 5, this.x - 8, this.y + this.height/2 - 12);
             ctx.stroke();
             
-            // Кисточка на хвосте
-            ctx.fillStyle = '#8B4513';
-            ctx.beginPath();
-            ctx.arc(this.x - 10, this.y + this.height/2 - 15, 4, 0, Math.PI * 2);
-            ctx.fill();
+            // Кисточка на хвосте (пушистая)
+            ctx.fillStyle = this.color;
+            for(let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 / 5) * i;
+                const x = this.x - 8 + Math.cos(angle) * 5;
+                const y = this.y + this.height/2 - 12 + Math.sin(angle) * 5;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Шерсть на теле (точки)
+            ctx.fillStyle = '#543A20';
+            for(let i = 0; i < 15; i++) {
+                const furX = this.x + 10 + Math.random() * (this.width - 10);
+                const furY = this.y + 10 + Math.random() * (this.height - 10);
+                ctx.beginPath();
+                ctx.arc(furX, furY, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
         },
         update() {
             // Гравитация
@@ -229,6 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     highScoreElement.textContent = highScore;
                     localStorage.setItem('elephantGameHighScore', highScore);
                 }
+                
+                // Проверяем, достигнут ли конец игры (50 очков)
+                if (score >= 50) {
+                    endGameWithNuclearExplosion();
+                }
             }
         }
 
@@ -246,6 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawBackground() {
         // Небо с закатом (уже задано в CSS)
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Сотовые скалы на заднем плане
+        drawHexagonalRocks();
 
         // Песок
         ctx.fillStyle = '#F4A460'; // Светло-оранжевый песок
@@ -265,6 +321,64 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = '#FFD700';
         ctx.beginPath();
         ctx.arc(canvas.width - 100, 50, 30, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Рисуем сотовые скалы
+    function drawHexagonalRocks() {
+        const hexHeight = 40;
+        const hexWidth = Math.sqrt(3) * hexHeight / 2;
+        const vertDist = hexHeight * 3/4;
+        
+        // Цвета для скал
+        const colors = ['#C19A6B', '#D2B48C', '#DEB887', '#BC9A6A'];
+        
+        // Рисуем несколько рядов шестиугольников
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < Math.ceil(canvas.width / hexWidth) + 1; col++) {
+                const x = col * hexWidth - (row % 2) * hexWidth / 2;
+                const y = canvas.height - 120 - row * vertDist;
+                
+                // Выбираем случайный цвет для каждого шестиугольника
+                const colorIndex = Math.floor(Math.random() * colors.length);
+                ctx.fillStyle = colors[colorIndex];
+                
+                // Рисуем шестиугольник
+                drawHexagon(x, y, hexHeight / 2);
+                
+                // Добавляем тень для глубины
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const angle = Math.PI / 3 * i;
+                    const xPos = x + Math.cos(angle) * (hexHeight / 2 - 2);
+                    const yPos = y + Math.sin(angle) * (hexHeight / 2 - 2);
+                    if (i === 0) {
+                        ctx.moveTo(xPos, yPos);
+                    } else {
+                        ctx.lineTo(xPos, yPos);
+                    }
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+    }
+    
+    // Вспомогательная функция для рисования шестиугольника
+    function drawHexagon(x, y, radius) {
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = Math.PI / 3 * i;
+            const xPos = x + Math.cos(angle) * radius;
+            const yPos = y + Math.sin(angle) * radius;
+            if (i === 0) {
+                ctx.moveTo(xPos, yPos);
+            } else {
+                ctx.lineTo(xPos, yPos);
+            }
+        }
+        ctx.closePath();
         ctx.fill();
     }
 
@@ -338,10 +452,96 @@ document.addEventListener('DOMContentLoaded', () => {
         gameOver = true;
         gameOverElement.classList.remove('hidden');
     }
+    
+    // Конец игры с ядерным взрывом
+    function endGameWithNuclearExplosion() {
+        gameOver = true;
+        
+        // Показываем экран конца игры
+        gameOverElement.classList.remove('hidden');
+        const gameOverText = document.querySelector('.game-over-text');
+        gameOverText.textContent = 'КОНЕЦ ИГРЫ: ЯДЕРНЫЙ ВЗРЫВ!';
+        
+        // Создаем анимацию ядерного взрыва
+        let explosionRadius = 0;
+        let maxRadius = Math.max(canvas.width, canvas.height) * 1.5;
+        let explosionOpacity = 1;
+        
+        function animateExplosion() {
+            // Рисуем фон
+            drawBackground();
+            
+            // Рисуем мамонтёнка
+            elephant.draw();
+            
+            // Рисуем кости
+            for (const bone of bones) {
+                bone.draw();
+            }
+            
+            // Рисуем взрыв
+            ctx.save();
+            
+            // Внешний круг взрыва (ярко-белый центр)
+            const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, explosionRadius);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.3, 'rgba(255, 220, 0, 0.9)');
+            gradient.addColorStop(0.6, 'rgba(255, 100, 0, 0.7)');
+            gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.globalAlpha = explosionOpacity;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Грибовидное облако
+            if (explosionRadius > maxRadius * 0.3) {
+                ctx.fillStyle = `rgba(100, 100, 100, ${explosionOpacity * 0.8})`;
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, canvas.height/2 - explosionRadius * 0.4, explosionRadius * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Столб дыма
+                ctx.fillStyle = `rgba(80, 80, 80, ${explosionOpacity * 0.7})`;
+                ctx.fillRect(canvas.width/2 - explosionRadius * 0.2, canvas.height/2 - explosionRadius * 0.4, explosionRadius * 0.4, explosionRadius * 0.6);
+            }
+            
+            // Вспышка
+            if (explosionRadius < maxRadius * 0.2) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${explosionOpacity})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            ctx.restore();
+            
+            // Увеличиваем радиус взрыва
+            explosionRadius += maxRadius / 30;
+            
+            // Уменьшаем прозрачность
+            if (explosionRadius > maxRadius * 0.5) {
+                explosionOpacity -= 0.02;
+            }
+            
+            // Продолжаем анимацию, если взрыв не закончился
+            if (explosionOpacity > 0) {
+                requestAnimationFrame(animateExplosion);
+            }
+        }
+        
+        // Запускаем анимацию взрыва
+        animateExplosion();
+    }
 
     // Обработчики событий
     restartBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        startGame();
+    });
+    
+    // Обработка касаний для кнопки перезапуска
+    restartBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         startGame();
     });
 
