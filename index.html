@@ -21,6 +21,22 @@
             <div class="high-score">РЕКОРД: <span id="high-score-value">0</span></div>
             <button id="plus50-btn" class="plus50-button">+50 очков</button>
         </div>
+        <div id="instructions" class="instructions">
+            Нажмите на экран или пробел для прыжка. Избегайте костей!
+        </div>
+        <div class="controls-panel">
+            <button id="pause-btn" class="control-button">⏸ Пауза</button>
+            <button id="sound-toggle" class="control-button">🔊 Звук</button>
+            <button id="particle-toggle" class="control-button">✨ Эффекты</button>
+        </div>
+        <div id="pause-screen" class="hidden">
+            <div class="pause-text">ПАУЗА</div>
+            <button id="resume-btn" class="control-button">Продолжить</button>
+            <div class="settings-panel">
+                <button id="sound-toggle-pause" class="control-button">🔊 Звук</button>
+                <button id="particle-toggle-pause" class="control-button">✨ Эффекты</button>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
