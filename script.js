@@ -1,243 +1,317 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Инициализация Telegram Web App
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+// Основные переменные
+let game = {
+    score: 0,
+    bestScore: 0,
+    isPlaying: false,
+    isGameOver: false,
+    isPaused: false,
+    speed: 2,
+    jumpHeight: 100,
+    jumpDuration: 500
+};
 
-    // Установка темы в соответствии с темой Telegram
-    if (tg.themeParams.bg_color) {
-        document.body.style.backgroundColor = tg.themeParams.bg_color;
-    }
+// DOM элементы
+const dino = document.getElementById('dino');
+const cactus = document.getElementById('cactus');
+const cloud = document.getElementById('cloud');
+const gameArea = document.getElementById('game-area');
+const startScreen = document.getElementById('start-screen');
+const gameOverScreen = document.getElementById('game-over-screen');
+const pauseScreen = document.getElementById('pause-screen');
+const scoreElement = document.getElementById('current-score');
+const bestScoreElement = document.getElementById('best-score');
+const finalScoreElement = document.getElementById('final-score');
+const statusElement = document.getElementById('status');
 
-    const dino = document.querySelector('.dino');
-    const cactus = document.querySelector('.cactus');
-    const cloud = document.querySelector('.cloud');
-    const scoreElement = document.querySelector('.score');
-    const gameOverElement = document.querySelector('.game-over');
-    const continueBtn = document.getElementById('continue-btn');
-    const startScreen = document.querySelector('.start-screen');
-    const gameArea = document.querySelector('.game-area');
-
-    let score = 0;
-    let isJumping = false;
-    let isGameOver = false;
-    let gameStarted = false;
-    let cactusSpeed = 2;
-    let cloudSpeed = 1;
-
-    // Начало игры
-    function startGame() {
-        if (!gameStarted) {
-            gameStarted = true;
-            startScreen.style.display = 'none';
-            score = 0;
-            isGameOver = false;
-            scoreElement.textContent = score;
-
-            // Убедимся, что все анимации запущены
-            const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
-            allAnimatedElements.forEach(el => {
-                el.style.animationPlayState = 'running';
-            });
-
-            cactus.classList.add('move-left');
-            cloud.classList.add('cloud-move');
-            gameLoop();
+// Инициализация Telegram
+function initTelegram() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        // Установка темы
+        if (tg.themeParams.bg_color) {
+            document.body.style.backgroundColor = tg.themeParams.bg_color;
         }
+        
+        console.log('Telegram Web App инициализирован');
     }
+}
 
-    // Прыжок динозавра
-    function jump() {
-        if (!isJumping && gameStarted && !isGameOver) {
-            isJumping = true;
-            dino.classList.add('jump-animation');
-
-            setTimeout(() => {
-                dino.classList.remove('jump-animation');
-                isJumping = false;
-            }, 500);
-        }
+// Загрузка сохраненных данных
+function loadGameData() {
+    const saved = localStorage.getItem('dinoGameData');
+    if (saved) {
+        const data = JSON.parse(saved);
+        game.bestScore = data.bestScore || 0;
+        updateBestScore();
     }
+}
 
-    // Проверка столкновения с учетом уменьшенного размера динозавра
-    function checkCollision() {
-        const dinoRect = dino.getBoundingClientRect();
-        const cactusRect = cactus.getBoundingClientRect();
+// Сохранение данных
+function saveGameData() {
+    const data = {
+        bestScore: game.bestScore,
+        lastPlayed: new Date().toISOString()
+    };
+    localStorage.setItem('dinoGameData', JSON.stringify(data));
+}
 
-        // Создаем более точную область столкновения для маленького динозавра
-        const dinoHitbox = {
-            left: dinoRect.left + 5,
-            right: dinoRect.right - 5,
-            top: dinoRect.top + 5,
-            bottom: dinoRect.bottom - 2
-        };
+// Обновление счета
+function updateScore() {
+    scoreElement.textContent = game.score;
+}
 
-        return !(
-            dinoHitbox.right < cactusRect.left || 
-            dinoHitbox.left > cactusRect.right || 
-            dinoHitbox.bottom < cactusRect.top || 
-            dinoHitbox.top > cactusRect.bottom
-        );
+function updateBestScore() {
+    bestScoreElement.textContent = game.bestScore;
+}
+
+// Старт игры
+function startGame() {
+    if (game.isPlaying) return;
+    
+    game.isPlaying = true;
+    game.isGameOver = false;
+    game.score = 0;
+    game.speed = 2;
+    
+    startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
+    pauseScreen.style.display = 'none';
+    
+    updateScore();
+    updateStatus('Игра началась! Прыгайте!');
+    
+    // Запуск движения
+    cactus.style.animation = `moveLeft ${game.speed}s linear infinite`;
+    cloud.style.animation = 'cloudMove 10s linear infinite';
+    
+    // Игровой цикл
+    gameLoop();
+    
+    console.log('Игра начата');
+}
+
+// Пауза игры
+function togglePause() {
+    if (!game.isPlaying || game.isGameOver) return;
+    
+    game.isPaused = !game.isPaused;
+    
+    if (game.isPaused) {
+        pauseScreen.style.display = 'flex';
+        cactus.style.animationPlayState = 'paused';
+        cloud.style.animationPlayState = 'paused';
+        updateStatus('Игра на паузе');
+    } else {
+        pauseScreen.style.display = 'none';
+        cactus.style.animationPlayState = 'running';
+        cloud.style.animationPlayState = 'running';
+        updateStatus('Игра продолжается');
     }
+}
 
-    // Обновление игры
-    function gameLoop() {
-        if (!gameStarted || isGameOver) return;
+function resumeGame() {
+    game.isPaused = false;
+    pauseScreen.style.display = 'none';
+    cactus.style.animationPlayState = 'running';
+    cloud.style.animationPlayState = 'running';
+    updateStatus('Игра продолжается');
+}
 
-        // Проверка столкновения
-        if (checkCollision()) {
-            endGame();
-            return;
-        }
+// Прыжок
+function jump() {
+    if (!game.isPlaying || game.isGameOver || game.isPaused) return;
+    
+    // Добавляем класс прыжка
+    dino.classList.add('jumping');
+    
+    // Убираем класс через время прыжка
+    setTimeout(() => {
+        dino.classList.remove('jumping');
+    }, game.jumpDuration);
+    
+    updateStatus('Прыжок!');
+}
 
-        // Увеличение счета
-        score++;
-        scoreElement.textContent = Math.floor(score / 10);
+// Проверка столкновения
+function checkCollision() {
+    const dinoRect = dino.getBoundingClientRect();
+    const cactusRect = cactus.getBoundingClientRect();
+    
+    // Упрощенная проверка коллизии
+    const collision = !(
+        dinoRect.right < cactusRect.left ||
+        dinoRect.left > cactusRect.right ||
+        dinoRect.bottom < cactusRect.top ||
+        dinoRect.top > cactusRect.bottom
+    );
+    
+    return collision;
+}
 
-        // Увеличение скорости каждые 100 очков
-        if (score % 1000 === 0) {
-            cactusSpeed += 0.5;
-            cactus.style.animationDuration = `${2 / cactusSpeed}s`;
-        }
-
-        requestAnimationFrame(gameLoop);
+// Игровой цикл
+function gameLoop() {
+    if (!game.isPlaying || game.isGameOver || game.isPaused) return;
+    
+    // Проверка столкновения
+    if (checkCollision()) {
+        endGame();
+        return;
     }
-
-    // Конец игры
-    function endGame() {
-        isGameOver = true;
-        gameStarted = false;
-
-        // Заморозка всех анимаций
-        const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
-        allAnimatedElements.forEach(el => {
-            el.style.animationPlayState = 'paused';
-        });
-
-        // Остановка движения кактусов и облаков
-        cactus.classList.remove('move-left');
-        cloud.classList.remove('cloud-move');
-
-        gameOverElement.style.display = 'block';
-        continueBtn.style.display = 'block';
-
-        // Отправка результата в Telegram
-        sendScoreToTelegram();
+    
+    // Увеличение счета
+    game.score++;
+    updateScore();
+    
+    // Увеличение скорости каждые 100 очков
+    if (game.score % 100 === 0) {
+        game.speed = Math.max(0.5, game.speed - 0.1);
+        cactus.style.animationDuration = `${game.speed}s`;
+        updateStatus(`Скорость увеличена! ${game.speed.toFixed(1)}x`);
     }
+    
+    // Следующий кадр
+    requestAnimationFrame(gameLoop);
+}
 
-    // Продолжение игры
-    function continueGame() {
-        // Сброс игры с сохранением счета
-        isGameOver = false;
-        gameStarted = true;
-        gameOverElement.style.display = 'none';
-        continueBtn.style.display = 'none';
-
-        // Возобновление всех анимаций
-        const allAnimatedElements = document.querySelectorAll('.cactus, .cloud, .dino-leg, .dino-arm, .dino-eye');
-        allAnimatedElements.forEach(el => {
-            el.style.animationPlayState = 'running';
-        });
-
-        // Перезапуск движения кактусов и облаков
-        cactus.classList.add('move-left');
-        cloud.classList.add('cloud-move');
-
-        // Продолжение игрового цикла
-        gameLoop();
+// Конец игры
+function endGame() {
+    game.isPlaying = false;
+    game.isGameOver = true;
+    
+    // Остановка анимаций
+    cactus.style.animation = 'none';
+    cloud.style.animation = 'none';
+    
+    // Обновление рекорда
+    if (game.score > game.bestScore) {
+        game.bestScore = game.score;
+        updateBestScore();
+        saveGameData();
+        updateStatus('🎉 Новый рекорд!');
     }
+    
+    // Показ экрана конца игры
+    finalScoreElement.textContent = game.score;
+    gameOverScreen.style.display = 'flex';
+    
+    console.log(`Игра окончена. Счет: ${game.score}`);
+}
 
-    // Обработчики событий для управления тапами
-    gameArea.addEventListener('click', () => {
-        if (!gameStarted && !isGameOver) {
-            startGame();
-        } else if (gameStarted && !isGameOver) {
-            jump();
-        }
-    });
+// Рестарт игры
+function restartGame() {
+    // Сброс положения кактуса
+    cactus.style.right = '-40px';
+    cactus.style.animation = 'none';
+    
+    // Сброс положения облака
+    cloud.style.right = '-60px';
+    cloud.style.animation = 'none';
+    
+    // Скрытие экранов
+    startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
+    pauseScreen.style.display = 'none';
+    
+    // Запуск новой игры
+    setTimeout(() => {
+        startGame();
+    }, 100);
+}
 
-    // Обработчик кнопки "Продолжить"
-    continueBtn.addEventListener('click', () => {
-        continueGame();
-    });
+// Показать стартовый экран
+function showStartScreen() {
+    gameOverScreen.style.display = 'none';
+    pauseScreen.style.display = 'none';
+    startScreen.style.display = 'flex';
+    
+    // Сброс положения объектов
+    cactus.style.right = '-40px';
+    cactus.style.animation = 'none';
+    cloud.style.right = '-60px';
+    cloud.style.animation = 'none';
+    
+    game.isPlaying = false;
+    game.isGameOver = false;
+    game.isPaused = false;
+    
+    updateStatus('Готов к игре!');
+}
 
-    // Поддержка клавиатуры для десктопа
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            e.preventDefault();
-            if (!gameStarted) {
-                startGame();
-            } else {
-                jump();
-            }
-        }
-    });
+// Обновление статуса
+function updateStatus(text) {
+    statusElement.textContent = text;
+}
 
-    // Поддержка касаний для мобильных устройств
-    gameArea.addEventListener('touchstart', (e) => {
+// Обработчики событий
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault();
-        if (!gameStarted && !isGameOver) {
+        if (!game.isPlaying && !game.isGameOver) {
             startGame();
-        } else if (gameStarted && !isGameOver) {
+        } else if (game.isPlaying && !game.isGameOver) {
             jump();
+        } else if (game.isGameOver) {
+            restartGame();
         }
-    });
-
-    // Дополнительная обработка касаний для более отзывчивого управления
-    gameArea.addEventListener('touchend', (e) => {
+    } else if (e.code === 'Escape') {
         e.preventDefault();
-    });
-
-    // Отправка результата в Telegram при завершении игры
-    function sendScoreToTelegram() {
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const data = {
-                score: Math.floor(score / 10),
-                user: tg.initDataUnsafe.user
-            };
-
-            // Здесь можно добавить код для отправки данных на ваш сервер
-            console.log('Game score:', data);
-        }
+        togglePause();
     }
-
-    // Предотвращение двойного нажатия для масштабирования на мобильных
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-
-    // Добавление новых кактусов и облаков
-    setInterval(() => {
-        if (gameStarted && !isGameOver) {
-            const newCactus = cactus.cloneNode(true);
-            newCactus.style.right = '-25px';
-            newCactus.classList.add('move-left');
-            newCactus.style.animationDuration = `${2 / cactusSpeed}s`;
-            gameArea.appendChild(newCactus);
-
-            setTimeout(() => {
-                newCactus.remove();
-            }, 2000 / cactusSpeed);
-        }
-    }, 2000);
-
-    setInterval(() => {
-        if (gameStarted && !isGameOver) {
-            const newCloud = cloud.cloneNode(true);
-            newCloud.style.right = '-40px';
-            newCloud.style.top = `${Math.random() * 50}px`;
-            newCloud.classList.add('cloud-move');
-            newCloud.style.animationDuration = `${10 / cloudSpeed}s`;
-            gameArea.appendChild(newCloud);
-
-            setTimeout(() => {
-                newCloud.remove();
-            }, 10000 / cloudSpeed);
-        }
-    }, 5000);
 });
+
+gameArea.addEventListener('click', function() {
+    if (!game.isPlaying && !game.isGameOver) {
+        startGame();
+    } else if (game.isPlaying && !game.isGameOver) {
+        jump();
+    }
+});
+
+// Для мобильных устройств
+gameArea.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    if (!game.isPlaying && !game.isGameOver) {
+        startGame();
+    } else if (game.isPlaying && !game.isGameOver) {
+        jump();
+    }
+}, { passive: false });
+
+// Инициализация при загрузке
+window.addEventListener('load', function() {
+    initTelegram();
+    loadGameData();
+    updateStatus('Нажмите "Начать игру"');
+    console.log('Игра загружена и готова!');
+});
+
+// Автогенерация кактусов (опционально)
+setInterval(function() {
+    if (game.isPlaying && !game.isGameOver && !game.isPaused) {
+        // Можно добавить больше кактусов
+        if (Math.random() > 0.7) {
+            const newCactus = cactus.cloneNode(true);
+            newCactus.style.right = '-40px';
+            newCactus.style.animation = `moveLeft ${game.speed}s linear infinite`;
+            gameArea.appendChild(newCactus);
+            
+            // Удаление через время
+            setTimeout(() => {
+                if (newCactus.parentNode) {
+                    newCactus.remove();
+                }
+            }, game.speed * 1000);
+        }
+    }
+}, 1500);
+
+// Экспорт функций для HTML
+window.startGame = startGame;
+window.jump = jump;
+window.togglePause = togglePause;
+window.restartGame = restartGame;
+window.resumeGame = resumeGame;
+window.showStartScreen = showStartScreen;
