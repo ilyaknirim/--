@@ -32,37 +32,85 @@ document.addEventListener('DOMContentLoaded', () => {
         jumping: false,
         jumpVelocity: 0,
         gravity: 0.8,
-        jumpPower: -15,
+        jumpPower: -18, // Увеличенная сила прыжка для преодоления 3 косточек
         grounded: true,
         color: '#8B4513', // Коричневый цвет для слона
         draw() {
-            // Тело слона
+            // Основной цвет слона
             ctx.fillStyle = this.color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-
-            // Голова слона
-            ctx.fillRect(this.x + this.width - 20, this.y - 20, 30, 30);
-
-            // Хобот
+            
+            // Тело слона (более детализированное)
             ctx.beginPath();
-            ctx.moveTo(this.x + this.width, this.y);
-            ctx.lineTo(this.x + this.width + 20, this.y + 10);
-            ctx.lineTo(this.x + this.width + 15, this.y + 20);
-            ctx.lineTo(this.x + this.width, this.y + 15);
-            ctx.closePath();
+            ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2, this.height/2.5, 0, 0, Math.PI * 2);
             ctx.fill();
-
-            // Уши
+            
+            // Голова слона (круглая)
             ctx.beginPath();
-            ctx.moveTo(this.x + this.width - 20, this.y - 10);
-            ctx.lineTo(this.x + this.width - 30, this.y - 30);
-            ctx.lineTo(this.x + this.width - 10, this.y - 30);
-            ctx.closePath();
+            ctx.arc(this.x + this.width - 15, this.y - 15, 18, 0, Math.PI * 2);
             ctx.fill();
-
-            // Ноги
-            ctx.fillRect(this.x + 10, this.y + this.height, 10, 15);
-            ctx.fillRect(this.x + 40, this.y + this.height, 10, 15);
+            
+            // Хобот (S-образный)
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width - 5, this.y);
+            ctx.quadraticCurveTo(this.x + this.width + 10, this.y + 10, this.x + this.width + 5, this.y + 25);
+            ctx.stroke();
+            
+            // Глаза
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(this.x + this.width - 18, this.y - 20, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(this.x + this.width - 18, this.y - 20, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Уши (большие и детализированные)
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.ellipse(this.x + this.width - 25, this.y - 25, 8, 15, Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(this.x + this.width - 5, this.y - 25, 8, 15, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Ноги (детализированные)
+            const legWidth = 12;
+            const legHeight = 20;
+            
+            // Передние ноги
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.ellipse(this.x + 15, this.y + this.height, legWidth/2, legHeight/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(this.x + 15, this.y + this.height + 10, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Задние ноги
+            ctx.beginPath();
+            ctx.ellipse(this.x + 45, this.y + this.height, legWidth/2, legHeight/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(this.x + 45, this.y + this.height + 10, legWidth/2 - 2, legHeight/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Хвост
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y + this.height/2);
+            ctx.quadraticCurveTo(this.x - 15, this.y + this.height/2 - 5, this.x - 10, this.y + this.height/2 - 15);
+            ctx.stroke();
+            
+            // Кисточка на хвосте
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.arc(this.x - 10, this.y + this.height/2 - 15, 4, 0, Math.PI * 2);
+            ctx.fill();
         },
         update() {
             // Гравитация
@@ -107,20 +155,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
+            // Основной цвет костей
             ctx.fillStyle = this.color;
+            ctx.strokeStyle = '#E6D7C3'; // Более темный оттенок для контура
+            ctx.lineWidth = 1;
 
             // Рисуем несколько косточек подряд
             for (let i = 0; i < this.boneCount; i++) {
                 const boneX = this.x + i * this.width;
-
-                // Основная часть кости
-                ctx.fillRect(boneX, this.y, this.width - 10, this.height);
-
-                // Концы кости (округления)
+                
+                // Центральная часть кости (утолщенная посередине)
                 ctx.beginPath();
-                ctx.arc(boneX, this.y + this.height / 2, this.height / 2, Math.PI / 2, Math.PI * 1.5);
-                ctx.arc(boneX + this.width - 10, this.y + this.height / 2, this.height / 2, Math.PI * 1.5, Math.PI / 2);
+                ctx.moveTo(boneX + 5, this.y + this.height * 0.7);
+                ctx.quadraticCurveTo(boneX + this.width/2 - 5, this.y + this.height * 0.3, boneX + this.width - 15, this.y + this.height * 0.7);
+                ctx.lineTo(boneX + this.width - 15, this.y + this.height * 0.9);
+                ctx.quadraticCurveTo(boneX + this.width/2 - 5, this.y + this.height * 0.5, boneX + 5, this.y + this.height * 0.9);
+                ctx.closePath();
                 ctx.fill();
+                ctx.stroke();
+                
+                // Левый сустав кости
+                ctx.beginPath();
+                ctx.ellipse(boneX + 5, this.y + this.height/2, this.height * 0.4, this.height * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Правый сустав кости
+                ctx.beginPath();
+                ctx.ellipse(boneX + this.width - 15, this.y + this.height/2, this.height * 0.4, this.height * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Добавляем текстуру и трещины для реалистичности
+                ctx.strokeStyle = '#D2B48C'; // Более темный цвет для трещин
+                ctx.lineWidth = 0.5;
+                
+                // Несколько случайных трещин
+                if (Math.random() > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(boneX + 8, this.y + this.height * 0.5);
+                    ctx.lineTo(boneX + 12, this.y + this.height * 0.6);
+                    ctx.stroke();
+                }
+                
+                if (Math.random() > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(boneX + this.width/2, this.y + this.height * 0.4);
+                    ctx.lineTo(boneX + this.width/2 + 3, this.y + this.height * 0.5);
+                    ctx.stroke();
+                }
+                
+                if (Math.random() > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(boneX + this.width - 18, this.y + this.height * 0.5);
+                    ctx.lineTo(boneX + this.width - 14, this.y + this.height * 0.6);
+                    ctx.stroke();
+                }
             }
         }
 
@@ -250,7 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчики событий
-    restartBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        startGame();
+    });
 
     // Обработка нажатий (для десктопа)
     document.addEventListener('keydown', (e) => {
