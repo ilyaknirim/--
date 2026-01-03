@@ -195,6 +195,24 @@ function startGame() {
 // Добавим обработчики для новых кнопок
 pauseBtn.addEventListener('click', togglePause);
 
+// Обработчики для клика и касания по экрану
+canvas.addEventListener('click', (e) => {
+    if (!gameStarted) {
+        startGame();
+    } else if (!gameOver && !isPaused) {
+        elephant.jump();
+    }
+});
+
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (!gameStarted) {
+        startGame();
+    } else if (!gameOver && !isPaused) {
+        elephant.jump();
+    }
+});
+
 soundToggleBtn.addEventListener('click', () => {
     soundEnabled = !soundEnabled;
     soundToggleBtn.textContent = soundEnabled ? '🔊 Звук' : '🔇 Звук';
