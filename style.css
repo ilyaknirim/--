@@ -43,6 +43,22 @@ body {
     margin-bottom: 10px;
 }
 
+.plus50-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #ff7e5f;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 5px;
+}
+
+.plus50-button:hover {
+    background-color: #feb47b;
+}
+
 #game-over {
     position: absolute;
     top: 0;

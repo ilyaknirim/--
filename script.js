@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverElement = document.getElementById('game-over');
     const startScreen = document.getElementById('start-screen');
     const restartBtn = document.getElementById('restart-btn');
+    const plus50Btn = document.getElementById('plus50-btn');
     const scoreElement = document.getElementById('score-value');
     const highScoreElement = document.getElementById('high-score-value');
 
@@ -330,8 +331,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const hexWidth = Math.sqrt(3) * hexHeight / 2;
         const vertDist = hexHeight * 3/4;
         
-        // Цвета для скал
-        const colors = ['#C19A6B', '#D2B48C', '#DEB887', '#BC9A6A'];
+        // Цвета для скал (более реалистичные оттенки песчаника)
+        const colors = ['#C19A6B', '#D2B48C', '#DEB887', '#BC9A6A', '#BDA58A', '#C9B89A'];
         
         // Рисуем несколько рядов шестиугольников
         for (let row = 0; row < 3; row++) {
@@ -345,6 +346,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Рисуем шестиугольник
                 drawHexagon(x, y, hexHeight / 2);
+                
+                // Добавляем текстуру и трещины для реалистичности
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.lineWidth = 1;
+                
+                // Добавляем несколько случайных трещин
+                for (let i = 0; i < 3; i++) {
+                    if (Math.random() > 0.5) {
+                        const startX = x + Math.random() * hexHeight - hexHeight/2;
+                        const startY = y + Math.random() * hexHeight - hexHeight/2;
+                        const endX = startX + (Math.random() - 0.5) * hexHeight;
+                        const endY = startY + (Math.random() - 0.5) * hexHeight;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(startX, startY);
+                        ctx.lineTo(endX, endY);
+                        ctx.stroke();
+                    }
+                }
                 
                 // Добавляем тень для глубины
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
@@ -360,6 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 ctx.closePath();
+                ctx.fill();
+                
+                // Добавляем высветления для объема
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.arc(x - hexHeight/4, y - hexHeight/4, hexHeight/6, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
@@ -543,6 +569,42 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
         startGame();
+    });
+    
+    // Обработчик для кнопки +50 очков
+    plus50Btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        score = 50;
+        scoreElement.textContent = score;
+        
+        // Обновляем рекорд
+        if (score > highScore) {
+            highScore = score;
+            highScoreElement.textContent = highScore;
+            localStorage.setItem('elephantGameHighScore', highScore);
+        }
+        
+        // Запускаем ядерный взрыв
+        endGameWithNuclearExplosion();
+    });
+    
+    // Обработка касаний для кнопки +50
+    plus50Btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        score = 50;
+        scoreElement.textContent = score;
+        
+        // Обновляем рекорд
+        if (score > highScore) {
+            highScore = score;
+            highScoreElement.textContent = highScore;
+            localStorage.setItem('elephantGameHighScore', highScore);
+        }
+        
+        // Запускаем ядерный взрыв
+        endGameWithNuclearExplosion();
     });
 
     // Обработка нажатий (для десктопа)
