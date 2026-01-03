@@ -223,12 +223,29 @@ body {
 
 .game-over {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 20px;
     color: #535353;
     display: none;
+}
+
+.continue-btn {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #535353;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+    touch-action: manipulation;
+    user-select: none;
 }
 
 .start-screen {

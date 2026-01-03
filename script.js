@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloud = document.querySelector('.cloud');
     const scoreElement = document.querySelector('.score');
     const gameOverElement = document.querySelector('.game-over');
+    const continueBtn = document.getElementById('continue-btn');
     const startScreen = document.querySelector('.start-screen');
     const gameArea = document.querySelector('.game-area');
 
@@ -102,25 +103,40 @@ document.addEventListener('DOMContentLoaded', () => {
         cactus.classList.remove('move-left');
         cloud.classList.remove('cloud-move');
         gameOverElement.style.display = 'block';
+        continueBtn.style.display = 'block';
 
         // Отправка результата в Telegram
         sendScoreToTelegram();
+    }
 
-        setTimeout(() => {
-            gameOverElement.style.display = 'none';
-            startScreen.style.display = 'block';
-            cactusSpeed = 2;
-            cactus.style.animationDuration = '2s';
-        }, 2000);
+    // Продолжение игры
+    function continueGame() {
+        // Сброс игры с сохранением счета
+        isGameOver = false;
+        gameStarted = true;
+        gameOverElement.style.display = 'none';
+        continueBtn.style.display = 'none';
+
+        // Перезапуск анимаций
+        cactus.classList.add('move-left');
+        cloud.classList.add('cloud-move');
+
+        // Продолжение игрового цикла
+        gameLoop();
     }
 
     // Обработчики событий для управления тапами
     gameArea.addEventListener('click', () => {
-        if (!gameStarted) {
+        if (!gameStarted && !isGameOver) {
             startGame();
-        } else {
+        } else if (gameStarted && !isGameOver) {
             jump();
         }
+    });
+
+    // Обработчик кнопки "Продолжить"
+    continueBtn.addEventListener('click', () => {
+        continueGame();
     });
 
     // Поддержка клавиатуры для десктопа
@@ -138,9 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Поддержка касаний для мобильных устройств
     gameArea.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        if (!gameStarted) {
+        if (!gameStarted && !isGameOver) {
             startGame();
-        } else {
+        } else if (gameStarted && !isGameOver) {
             jump();
         }
     });
