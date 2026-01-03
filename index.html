@@ -2,41 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Слоник в пустыне</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Dino Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <div id="game-over" class="hidden">
-            <div class="game-over-text">GAME OVER</div>
-            <button id="restart-btn">Перезапустить</button>
-        </div>
-        <div id="start-screen">
-            <div class="start-text">Нажмите на экран, чтобы начать</div>
-        </div>
-        <canvas id="game-canvas"></canvas>
-        <div class="score-container">
-            <div class="score">СЧЕТ: <span id="score-value">0</span></div>
-            <div class="high-score">РЕКОРД: <span id="high-score-value">0</span></div>
-            <button id="plus50-btn" class="plus50-button">+50 очков</button>
-        </div>
-        <div id="instructions" class="instructions">
-            Нажмите на экран или пробел для прыжка. Избегайте костей!
-        </div>
-        <div class="controls-panel">
-            <button id="pause-btn" class="control-button">⏸ Пауза</button>
-            <button id="sound-toggle" class="control-button">🔊 Звук</button>
-            <button id="particle-toggle" class="control-button">✨ Эффекты</button>
-        </div>
-        <div id="pause-screen" class="hidden">
-            <div class="pause-text">ПАУЗА</div>
-            <button id="resume-btn" class="control-button">Продолжить</button>
-            <div class="settings-panel">
-                <button id="sound-toggle-pause" class="control-button">🔊 Звук</button>
-                <button id="particle-toggle-pause" class="control-button">✨ Эффекты</button>
+        <div class="game-area">
+            <div class="ground"></div>
+            <div class="dino">
+                <div class="dino-body"></div>
+                <div class="dino-head"></div>
+                <div class="dino-eye">
+                    <div class="dino-pupil"></div>
+                </div>
+                <div class="dino-leg front"></div>
+                <div class="dino-leg back"></div>
+                <div class="dino-arm"></div>
+                <div class="dino-tail"></div>
             </div>
+            <div class="cactus">
+                <div class="cactus-main"></div>
+                <div class="cactus-arm-left"></div>
+                <div class="cactus-arm-right"></div>
+                <div class="cactus-small"></div>
+            </div>
+            <div class="cloud"></div>
+            <div class="score">0</div>
+            <div class="game-over">Game Over</div>
+            <div class="start-screen">Нажмите, чтобы начать</div>
         </div>
+
     </div>
     <script src="script.js"></script>
 </body>
