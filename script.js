@@ -301,8 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Небо с закатом (уже задано в CSS)
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Сотовые скалы на заднем плане
-        drawHexagonalRocks();
+        // Пустынные скалы на заднем плане
+        drawDesertRocks();
 
         // Песок
         ctx.fillStyle = '#F4A460'; // Светло-оранжевый песок
@@ -325,68 +325,54 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
     }
     
-    // Рисуем сотовые скалы
-    function drawHexagonalRocks() {
-        const hexHeight = 40;
-        const hexWidth = Math.sqrt(3) * hexHeight / 2;
-        const vertDist = hexHeight * 3/4;
+    // Рисуем пустынные скалы
+    function drawDesertRocks() {
+        // Цвета для скал
+        const rockColors = ['#C19A6B', '#D2B48C', '#DEB887', '#BC9A6A', '#BDA58A'];
         
-        // Цвета для скал (более реалистичные оттенки песчаника)
-        const colors = ['#C19A6B', '#D2B48C', '#DEB887', '#BC9A6A', '#BDA58A', '#C9B89A'];
-        
-        // Рисуем несколько рядов шестиугольников
-        for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < Math.ceil(canvas.width / hexWidth) + 1; col++) {
-                const x = col * hexWidth - (row % 2) * hexWidth / 2;
-                const y = canvas.height - 120 - row * vertDist;
+        // Рисуем несколько скал
+        for (let i = 0; i < 5; i++) {
+            const rockX = Math.random() * canvas.width;
+            const rockY = canvas.height - 120 - Math.random() * 80;
+            const rockWidth = 80 + Math.random() * 60;
+            const rockHeight = 60 + Math.random() * 40;
+            
+            // Выбираем случайный цвет
+            const colorIndex = Math.floor(Math.random() * rockColors.length);
+            ctx.fillStyle = rockColors[colorIndex];
+            
+            // Рисуем скалу
+            ctx.beginPath();
+            ctx.moveTo(rockX, rockY + rockHeight);
+            ctx.lineTo(rockX + rockWidth * 0.2, rockY + rockHeight * 0.6);
+            ctx.lineTo(rockX + rockWidth * 0.4, rockY + rockHeight * 0.8);
+            ctx.lineTo(rockX + rockWidth * 0.6, rockY + rockHeight * 0.5);
+            ctx.lineTo(rockX + rockWidth * 0.8, rockY + rockHeight * 0.7);
+            ctx.lineTo(rockX + rockWidth, rockY + rockHeight);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Добавляем тень
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(rockX + 5, rockY + rockHeight);
+            ctx.lineTo(rockX + rockWidth * 0.2 + 5, rockY + rockHeight * 0.6);
+            ctx.lineTo(rockX + rockWidth * 0.4 + 5, rockY + rockHeight * 0.8);
+            ctx.lineTo(rockX + rockWidth * 0.6 + 5, rockY + rockHeight * 0.5);
+            ctx.lineTo(rockX + rockWidth * 0.8 + 5, rockY + rockHeight * 0.7);
+            ctx.lineTo(rockX + rockWidth + 5, rockY + rockHeight);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Добавляем текстуру
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            for (let j = 0; j < 5; j++) {
+                const crackX = rockX + Math.random() * rockWidth;
+                const crackY = rockY + Math.random() * rockHeight;
+                const crackWidth = 1 + Math.random() * 2;
+                const crackHeight = 5 + Math.random() * 10;
                 
-                // Выбираем случайный цвет для каждого шестиугольника
-                const colorIndex = Math.floor(Math.random() * colors.length);
-                ctx.fillStyle = colors[colorIndex];
-                
-                // Рисуем шестиугольник
-                drawHexagon(x, y, hexHeight / 2);
-                
-                // Добавляем текстуру и трещины для реалистичности
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-                ctx.lineWidth = 1;
-                
-                // Добавляем несколько случайных трещин
-                for (let i = 0; i < 3; i++) {
-                    if (Math.random() > 0.5) {
-                        const startX = x + Math.random() * hexHeight - hexHeight/2;
-                        const startY = y + Math.random() * hexHeight - hexHeight/2;
-                        const endX = startX + (Math.random() - 0.5) * hexHeight;
-                        const endY = startY + (Math.random() - 0.5) * hexHeight;
-                        
-                        ctx.beginPath();
-                        ctx.moveTo(startX, startY);
-                        ctx.lineTo(endX, endY);
-                        ctx.stroke();
-                    }
-                }
-                
-                // Добавляем тень для глубины
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-                ctx.beginPath();
-                for (let i = 0; i < 6; i++) {
-                    const angle = Math.PI / 3 * i;
-                    const xPos = x + Math.cos(angle) * (hexHeight / 2 - 2);
-                    const yPos = y + Math.sin(angle) * (hexHeight / 2 - 2);
-                    if (i === 0) {
-                        ctx.moveTo(xPos, yPos);
-                    } else {
-                        ctx.lineTo(xPos, yPos);
-                    }
-                }
-                ctx.closePath();
-                ctx.fill();
-                
-                // Добавляем высветления для объема
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-                ctx.beginPath();
-                ctx.arc(x - hexHeight/4, y - hexHeight/4, hexHeight/6, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillRect(crackX, crackY, crackWidth, crackHeight);
             }
         }
     }
@@ -488,12 +474,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const gameOverText = document.querySelector('.game-over-text');
         gameOverText.textContent = 'КОНЕЦ ИГРЫ: ЯДЕРНЫЙ ВЗРЫВ!';
         
-        // Создаем анимацию ядерного взрыва
+        // Запускаем кат-сцену с падающей бомбой
+        playBombCutscene();
+    }
+    
+    // Кат-сцена с падающей бомбой и взрывом
+    function playBombCutscene() {
+        let bombY = -50; // Начальная позиция бомбы за пределами экрана
+        let bombSpeed = 5; // Скорость падения бомбы
+        let explosionStarted = false;
         let explosionRadius = 0;
         let maxRadius = Math.max(canvas.width, canvas.height) * 1.5;
         let explosionOpacity = 1;
         
-        function animateExplosion() {
+        function animateBombCutscene() {
             // Рисуем фон
             drawBackground();
             
@@ -505,56 +499,103 @@ document.addEventListener('DOMContentLoaded', () => {
                 bone.draw();
             }
             
-            // Рисуем взрыв
-            ctx.save();
-            
-            // Внешний круг взрыва (ярко-белый центр)
-            const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, explosionRadius);
-            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-            gradient.addColorStop(0.3, 'rgba(255, 220, 0, 0.9)');
-            gradient.addColorStop(0.6, 'rgba(255, 100, 0, 0.7)');
-            gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
-            
-            ctx.fillStyle = gradient;
-            ctx.globalAlpha = explosionOpacity;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Грибовидное облако
-            if (explosionRadius > maxRadius * 0.3) {
-                ctx.fillStyle = `rgba(100, 100, 100, ${explosionOpacity * 0.8})`;
+            // Рисуем бомбу, если взрыв еще не начался
+            if (!explosionStarted) {
+                // Тело бомбы
+                ctx.fillStyle = '#333333';
                 ctx.beginPath();
-                ctx.arc(canvas.width/2, canvas.height/2 - explosionRadius * 0.4, explosionRadius * 0.4, 0, Math.PI * 2);
+                ctx.arc(canvas.width / 2, bombY, 20, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Столб дыма
-                ctx.fillStyle = `rgba(80, 80, 80, ${explosionOpacity * 0.7})`;
-                ctx.fillRect(canvas.width/2 - explosionRadius * 0.2, canvas.height/2 - explosionRadius * 0.4, explosionRadius * 0.4, explosionRadius * 0.6);
-            }
-            
-            // Вспышка
-            if (explosionRadius < maxRadius * 0.2) {
-                ctx.fillStyle = `rgba(255, 255, 255, ${explosionOpacity})`;
+                // Хвост бомбы
+                ctx.fillStyle = '#FF4500';
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2 - 15, bombY + 5);
+                ctx.lineTo(canvas.width / 2 - 25, bombY + 25);
+                ctx.lineTo(canvas.width / 2 - 5, bombY + 15);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Второй хвост
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2 + 15, bombY + 5);
+                ctx.lineTo(canvas.width / 2 + 25, bombY + 25);
+                ctx.lineTo(canvas.width / 2 + 5, bombY + 15);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Искры от хвоста
+                for (let i = 0; i < 5; i++) {
+                    const sparkX = canvas.width / 2 + (Math.random() - 0.5) * 40;
+                    const sparkY = bombY + 20 + Math.random() * 10;
+                    const sparkSize = Math.random() * 3 + 1;
+                    
+                    ctx.fillStyle = `rgba(255, ${Math.floor(Math.random() * 100 + 155)}, 0, ${Math.random()})`;
+                    ctx.beginPath();
+                    ctx.arc(sparkX, sparkY, sparkSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Двигаем бомбу вниз
+                bombY += bombSpeed;
+                
+                // Проверяем, достигла ли бомба земли
+                if (bombY >= canvas.height - 100) {
+                    explosionStarted = true;
+                }
+            } else {
+                // Рисуем взрыв
+                ctx.save();
+                
+                // Внешний круг взрыва (ярко-белый центр)
+                const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height - 100, 0, canvas.width/2, canvas.height - 100, explosionRadius);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+                gradient.addColorStop(0.3, 'rgba(255, 220, 0, 0.9)');
+                gradient.addColorStop(0.6, 'rgba(255, 100, 0, 0.7)');
+                gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.globalAlpha = explosionOpacity;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            
-            ctx.restore();
-            
-            // Увеличиваем радиус взрыва
-            explosionRadius += maxRadius / 30;
-            
-            // Уменьшаем прозрачность
-            if (explosionRadius > maxRadius * 0.5) {
-                explosionOpacity -= 0.02;
+                
+                // Грибовидное облако
+                if (explosionRadius > maxRadius * 0.3) {
+                    ctx.fillStyle = `rgba(100, 100, 100, ${explosionOpacity * 0.8})`;
+                    ctx.beginPath();
+                    ctx.arc(canvas.width/2, canvas.height - 100 - explosionRadius * 0.4, explosionRadius * 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Столб дыма
+                    ctx.fillStyle = `rgba(80, 80, 80, ${explosionOpacity * 0.7})`;
+                    ctx.fillRect(canvas.width/2 - explosionRadius * 0.2, canvas.height - 100 - explosionRadius * 0.4, explosionRadius * 0.4, explosionRadius * 0.6);
+                }
+                
+                // Вспышка
+                if (explosionRadius < maxRadius * 0.2) {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${explosionOpacity})`;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                ctx.restore();
+                
+                // Увеличиваем радиус взрыва
+                explosionRadius += maxRadius / 30;
+                
+                // Уменьшаем прозрачность
+                if (explosionRadius > maxRadius * 0.5) {
+                    explosionOpacity -= 0.02;
+                }
             }
             
             // Продолжаем анимацию, если взрыв не закончился
-            if (explosionOpacity > 0) {
-                requestAnimationFrame(animateExplosion);
+            if (!explosionStarted || explosionOpacity > 0) {
+                requestAnimationFrame(animateBombCutscene);
             }
         }
         
-        // Запускаем анимацию взрыва
-        animateExplosion();
+        // Запускаем анимацию кат-сцены
+        animateBombCutscene();
+    }
     }
 
     // Обработчики событий
